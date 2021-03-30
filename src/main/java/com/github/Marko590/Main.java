@@ -14,6 +14,7 @@ import org.javacord.api.entity.user.User;
 import java.awt.*;
 import java.util.Collection;
 import java.util.Optional;
+import java.util.Queue;
 
 public class Main {
 
@@ -39,10 +40,53 @@ public class Main {
                     .login()
                     .join();
 
+            Optional<Server> optionalServer=api.getServerById("778381434590855209");
+
+            //Checking if the bot is connected to the server
+            if(!optionalServer.isPresent()){
+                System.err.println("Couldn't find the requested server");
+                return;
+            }
+            Server server= optionalServer.get();
+
+            QueueHandler queueHandler=new QueueHandler();
             api.addMessageCreateListener(event->{
                 Message message=event.getMessage();
+                User messageAuthor=message.getUserAuthor().get();
 
 
+                if(message.getContent().equalsIgnoreCase("!initialise")){
+                    queueHandler.initialiseTextChannel(message.getChannel().asTextChannel().get());
+                }
+
+                else if(message.getContent().equalsIgnoreCase("!queue")){
+                    queueHandler.addUserToQueue(messageAuthor);
+                }
+                else if(message.getContent().equalsIgnoreCase("!fivestack")){
+                    queueHandler.popTeam();
+                }
+                else if(message.getContent().equalsIgnoreCase("!dequeue")){
+                    queueHandler.dequeueUser(messageAuthor,true);
+                }
+                else if(message.getContent().equalsIgnoreCase("!list")){
+                    queueHandler.listUsers();
+                }
+                else if(message.getContent().equalsIgnoreCase("!ping")){
+                    queueHandler.pingUsers();
+                }
+                else if(message.getContent().equalsIgnoreCase("!help")){
+                    queueHandler.listOptions();
+                }
+                else if(message.getContent().equalsIgnoreCase("!clear")){
+                    queueHandler.forceQueueClear();
+                }
+                else if(message.getContent().equalsIgnoreCase("!getmonke")){
+                    queueHandler.getRandomFiveStack();
+                }
+
+
+
+                 /*
                 ChannelHandler master=new ChannelHandler(api);
 
                 if(message.getContent().equalsIgnoreCase("!create")) {
@@ -60,7 +104,7 @@ public class Main {
                 else if(message.getContent().equalsIgnoreCase("!announce")){
                     master.announceTournament("EHS","https://www.youtube.com/watch?v=4Qpg6iVqNWs&list=RDGMEMJQXQAmqrnmK1SEjY_rKBGAVMgItFOW551qc&index=19&ab_channel=MarkieMusic");
                 }
-
+                */
             });
 
 
