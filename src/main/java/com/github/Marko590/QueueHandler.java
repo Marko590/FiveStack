@@ -20,16 +20,18 @@ public class QueueHandler {
     private Random random =new Random();
 
 
+    private EmbedBuilder jokeEmbed = new EmbedBuilder()
+            .setImage("https://pbs.twimg.com/profile_images/1339642265090875392/zdjZK5e0_400x400.jpg");
     private EmbedBuilder helpEmbed = new EmbedBuilder()
             .setColor(Color.RED)
             .setTitle("Queue-Bot options")
-            .addField("/queue", "Adds you to the current queue")
-            .addField("/fivestack" , "Removes the first 5 users from the queue")
-            .addField("/dequeue","Removes you from the queue")
-            .addField("/list","Lists the users in the queue without mentioning them")
-            .addField("/ping","Lists the users in the queue and mentions them")
-            .addField("/clear","Forcefully clears the list of the players in queue")
-            .addField("/getmonke","Removes 5 random monkes from the queue");
+            .addField("-queue", "Adds you to the current queue")
+            .addField("-fivestack" , "Removes the first 5 users from the queue")
+            .addField("-dequeue","Removes you from the queue")
+            .addField("-list","Lists the users in the queue without mentioning them")
+            .addField("-ping","Lists the users in the queue and mentions them")
+            .addField("-clear","Forcefully clears the list of the players in queue")
+            .addField("-getmonke","Removes 5 random monkes from the queue");
 
 
      public QueueHandler() {
@@ -39,12 +41,17 @@ public class QueueHandler {
          this.targetTextChannel=targetTextChannel;
          sendMessage("Text channel saved");
      }
-     private void sendMessage(String message){
+     public void sendMessage(String message){
          new MessageBuilder()
                  .append(message)
                  .send(targetTextChannel);
      }
 
+     public void accessibilityMetod(){
+         new MessageBuilder()
+                 .setEmbed(jokeEmbed)
+                 .send(targetTextChannel);
+     }
     public void sendMentionsToUsers(String message){
         sendMessage(message+'\n'+getMentionableTags());
     }
@@ -61,7 +68,7 @@ public class QueueHandler {
          mainQueue.add(user);
          sendMessage("You have sucecessfuly been added to the queue.");
          if(mainQueue.size()==5){
-             sendMentionsToUsers("You have enough players to start a match! Type '/pop' to free up the queue.");
+             sendMentionsToUsers("You have enough players to start a match! Type '-pop' to free up the queue.");
          }
 
      }
@@ -108,16 +115,29 @@ public class QueueHandler {
     }
 
      public void popTeam(){
+        User first;
+        StringBuilder sb=new StringBuilder();
+        sb.append("The following players have started a queue for a match:"+'\n');
 
-         sendMessage("The following players have started a queue for a match:"+'\n'+getMentionableTags());
          if(mainQueue.size()>5) {
              for (int i = 0; i < 5; i++) {
-                 mainQueue.remove(i);
+                 first=mainQueue.getFirst();
+                 sb.append(first.getMentionTag()+'\n');
+                 mainQueue.removeFirst();
              }
+             sendMessage(sb.toString());
+         }
+         else if(mainQueue.size()!=0){
+             for(User u:mainQueue){
+                 sb.append(u.getMentionTag()+'\n');
+             }
+             mainQueue.clear();
+             sendMessage(sb.toString());
          }
          else{
-             mainQueue.clear();
+             sendMessage("The queue is currently empty.");
          }
+
      }
 
      public void forceQueueClear(){

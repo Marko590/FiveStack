@@ -40,7 +40,7 @@ public class Main {
                     .login()
                     .join();
 
-            Optional<Server> optionalServer=api.getServerById("778381434590855209");
+            Optional<Server> optionalServer=api.getServerById("703957572159406090");
 
             //Checking if the bot is connected to the server
             if(!optionalServer.isPresent()){
@@ -55,33 +55,36 @@ public class Main {
                 User messageAuthor=message.getUserAuthor().get();
 
 
-                if(message.getContent().equalsIgnoreCase("!initialise")){
+                if(message.getContent().equalsIgnoreCase("-initialise")){
                     queueHandler.initialiseTextChannel(message.getChannel().asTextChannel().get());
                 }
 
-                else if(message.getContent().equalsIgnoreCase("!queue")){
+                else if(message.getContent().equalsIgnoreCase("-queue")){
                     queueHandler.addUserToQueue(messageAuthor);
                 }
-                else if(message.getContent().equalsIgnoreCase("!fivestack")){
+                else if(message.getContent().equalsIgnoreCase("-fivestack")){
                     queueHandler.popTeam();
                 }
-                else if(message.getContent().equalsIgnoreCase("!dequeue")){
+                else if(message.getContent().equalsIgnoreCase("-unqueue")){
                     queueHandler.dequeueUser(messageAuthor,true);
                 }
-                else if(message.getContent().equalsIgnoreCase("!list")){
+                else if(message.getContent().equalsIgnoreCase("-list")){
                     queueHandler.listUsers();
                 }
-                else if(message.getContent().equalsIgnoreCase("!ping")){
+                else if(message.getContent().equalsIgnoreCase("-ping")){
                     queueHandler.pingUsers();
                 }
-                else if(message.getContent().equalsIgnoreCase("!help")){
+                else if(message.getContent().equalsIgnoreCase("-help")){
                     queueHandler.listOptions();
                 }
-                else if(message.getContent().equalsIgnoreCase("!clear")){
+                else if(message.getContent().equalsIgnoreCase("-clear")){
                     queueHandler.forceQueueClear();
                 }
-                else if(message.getContent().equalsIgnoreCase("!getmonke")){
+                else if(message.getContent().equalsIgnoreCase("-getmonke")){
                     queueHandler.getRandomFiveStack();
+                }
+                else if(message.getContent().equalsIgnoreCase("-golira")){
+                    queueHandler.accessibilityMetod();
                 }
 
 
