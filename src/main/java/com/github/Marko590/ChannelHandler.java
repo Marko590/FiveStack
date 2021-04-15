@@ -1,30 +1,21 @@
 package com.github.Marko590;
 
 import org.javacord.api.DiscordApi;
-import org.javacord.api.entity.Permissionable;
 import org.javacord.api.entity.channel.*;
-import org.javacord.api.entity.message.Message;
 import org.javacord.api.entity.message.MessageBuilder;
 import org.javacord.api.entity.permission.*;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
 
 import java.awt.*;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
 
-
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
+
 
 public class ChannelHandler {
     private DiscordApi api = null;
-
 
 
     public ChannelHandler(DiscordApi api) {
@@ -33,7 +24,7 @@ public class ChannelHandler {
 
     public void createFacultyChannels(String FacultyId, String FacultyName) {
         Optional<Server> optional_server = api.getServerById("778381434590855209");
-        boolean roleExists=false;
+
 
 
         if (optional_server.isPresent()) {
@@ -52,10 +43,10 @@ public class ChannelHandler {
                     .setState(PermissionType.SPEAK, PermissionState.ALLOWED)
                     .setState(PermissionType.USE_VOICE_ACTIVITY, PermissionState.ALLOWED)
                     .build();
-            Role  role=null;
-            for(Role i:api.getRoles()) {
-                if (i.getName().compareTo(FacultyId)==0){
-                    return ;
+            Role role = null;
+            for (Role i : api.getRoles()) {
+                if (i.getName().compareTo(FacultyId) == 0) {
+                    return;
                 }
             }
 
@@ -72,7 +63,7 @@ public class ChannelHandler {
             roleUpdater.update();
 
             ChannelCategory category = new ChannelCategoryBuilder(optional_server.get())
-                    .setName(FacultyName+" "+FacultyId)
+                    .setName(FacultyName + " " + FacultyId)
                     .create()
                     .join();
 
@@ -103,40 +94,39 @@ public class ChannelHandler {
     }
 
 
-public void AddUserToFaculty(String UserId,String FacultyId){
+    public void AddUserToFaculty(String UserId, String FacultyId) {
 
-        Optional<Server> optionalServer=api.getServerById("778381434590855209");
+        Optional<Server> optionalServer = api.getServerById("778381434590855209");
 
 
         //Checking the connection to the server
-        if(!optionalServer.isPresent()){
+        if (!optionalServer.isPresent()) {
             System.err.println("Couldn't find the requested server");
             return;
         }
 
         //Checking to see if the role exists
-        Role role=null;
-        for(Role i:api.getRoles()){
-            if(i.getName().compareTo(FacultyId)==0){
-                role=i;
+        Role role = null;
+        for (Role i : api.getRoles()) {
+            if (i.getName().compareTo(FacultyId) == 0) {
+                role = i;
             }
         }
 
-        if(role==null){
+        if (role == null) {
             System.err.println("Role does not exist yet");
             return;
         }
 
 
-        CompletableFuture<User> newUser=api.getUserById(UserId);
+        CompletableFuture<User> newUser = api.getUserById(UserId);
 
         //Checking if the user already has the role
 
 
-
-        for(Role i:newUser.join().getRoles(optionalServer.get())){
+        for (Role i : newUser.join().getRoles(optionalServer.get())) {
             System.out.println(i.getName());
-            if(i.getName().compareToIgnoreCase(FacultyId)==0){
+            if (i.getName().compareToIgnoreCase(FacultyId) == 0) {
 
                 System.err.println("User is already assigned to the requested role.");
                 return;
@@ -149,56 +139,51 @@ public void AddUserToFaculty(String UserId,String FacultyId){
         new MessageBuilder()
                 .append("Welcome user ")
                 .append(newUser.join().getMentionTag())
-                .append(" to the "+FacultyId.toUpperCase()+" faculty discord!")
+                .append(" to the " + FacultyId.toUpperCase() + " faculty discord!")
                 .send(getFacultyTextChannel(FacultyId).asTextChannel().get());
 
 
-
-
-
-}
-
-private TextChannel getFacultyTextChannel(String FacultyId){
-
-    TextChannel returnValue=null;
-    //Locating the faculty category that recieves the welcome message for the new user
-    Collection<ChannelCategory> categoryList=api.getChannelCategories();
-    ChannelCategory welcomeTarget=null;
-    for(ChannelCategory category: categoryList){
-        if(category.getName().contains(FacultyId)){
-            welcomeTarget=category;
-        }
     }
 
-    //Finding the textchannel within the category and sending the messages
-    for(Channel channel: welcomeTarget.getChannels()){
+    private TextChannel getFacultyTextChannel(String FacultyId) {
 
-        if(channel.getType().isTextChannelType()){
+        TextChannel returnValue = null;
+        //Locating the faculty category that recieves the welcome message for the new user
+        Collection<ChannelCategory> categoryList = api.getChannelCategories();
+        ChannelCategory welcomeTarget = null;
+        for (ChannelCategory category : categoryList) {
+            if (category.getName().contains(FacultyId)) {
+                welcomeTarget = category;
+            }
+        }
 
-            if(channel.asTextChannel().isPresent()){
+        //Finding the textchannel within the category and sending the messages
+        for (Channel channel : welcomeTarget.getChannels()) {
 
-                returnValue=channel.asTextChannel().get();
+            if (channel.getType().isTextChannelType()) {
+
+                if (channel.asTextChannel().isPresent()) {
+
+                    returnValue = channel.asTextChannel().get();
+
+                }
 
             }
-
         }
+        return returnValue;
     }
-    return returnValue;
-}
 
 
-public void addTeamtoFaculty(String TeamName,String TeamPageLink,String FacultyId){
+    public void addTeamtoFaculty(String TeamName, String TeamPageLink, String FacultyId) {
         new MessageBuilder()
-                .append("Team " + TeamName + " has been created, visit their page at "+ TeamPageLink+" for more info.")
+                .append("Team " + TeamName + " has been created, visit their page at " + TeamPageLink + " for more info.")
                 .send(getFacultyTextChannel(FacultyId));
+    }
 
-}
-
-public void announceTournament(String TournamentName,String TournamentPageLink){
+    public void announceTournament(String TournamentName, String TournamentPageLink) {
         new MessageBuilder()
-                .append("@everyone The tournament "+ TournamentName+" has been announced, visit " + TournamentPageLink+ " for more info.")
+                .append("@everyone The tournament " + TournamentName + " has been announced, visit " + TournamentPageLink + " for more info.")
                 .send(api.getChannelById("778381434590855212").get().asTextChannel().get());
-
-}
+    }
 
 }
