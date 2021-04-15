@@ -73,7 +73,7 @@ public class Main {
             } else if (message.getContent().equalsIgnoreCase("-getmonke")) {
                 queueHandler.getRandomFiveStack();
             } else if (message.getContent().equalsIgnoreCase("-golira")) {
-                queueHandler.accessibilityMetod();
+                queueHandler.goliraMetod();
             } else if (message.getContent().equalsIgnoreCase("-counter") || message.getContent().equalsIgnoreCase("-count")) {
                 queueHandler.goliraCounter();
             }
